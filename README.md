@@ -1,4 +1,4 @@
-# Compare-NET-Objects.Delta [![Build Status](https://travis-ci.com/Rem0o/CompareNETObjects.Delta.svg?branch=master)](https://travis-ci.com/Rem0o/CompareNETObjects.Delta)
+# Compare-NET-Objects.Delta [![Build Status](https://travis-ci.com/Rem0o/Compare-Net-Objects.Delta.svg?branch=master)](https://travis-ci.com/Rem0o/Compare-Net-Objects.Delta)
 Let's say we have two versions of a state object:
 
 ```c#
