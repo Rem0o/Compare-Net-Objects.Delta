@@ -1,2 +1,2 @@
-# Compare-NET-Objects.Actions
+# CompareNETObjects.Actions
 Generate mutation actions from your comparisons.
