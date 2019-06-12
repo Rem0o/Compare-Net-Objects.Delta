@@ -1,4 +1,4 @@
-﻿namespace CompareNetObjects.Actions.Tests
+﻿namespace CompareNetObjects.Delta.Tests
 {
     public class Employee
     {

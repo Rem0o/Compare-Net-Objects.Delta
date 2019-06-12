@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CompareNetObjects.Actions
+namespace CompareNetObjects.Delta
 {
     public class ComparisonResult<T> : ComparisonResult
     {

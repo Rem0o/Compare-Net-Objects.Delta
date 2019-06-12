@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace CompareNetObjects.Actions.Tests
+namespace CompareNetObjects.Delta.Tests
 {
     public class Company
     {

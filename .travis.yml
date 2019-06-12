@@ -6,4 +6,4 @@ install:
 - dotnet restore
 script:
 - dotnet build
-- dotnet test Compare-Net-Objects.Actions.Tests
+- dotnet test Compare-Net-Objects.Delta.Tests

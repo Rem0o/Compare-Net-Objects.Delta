@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace CompareNetObjects.Actions
+namespace CompareNetObjects.Delta
 {
     public static class Extensions
     {
@@ -19,26 +19,26 @@ namespace CompareNetObjects.Actions
 
         public static void ActualToExpected<T>(this ComparisonResult<T> comparisonResult, T obj)
         {
-            comparisonResult.GetActualToExpected()(obj);
+            comparisonResult.GetActualToExpected().Apply(obj);
         }
 
-        public static Action<T> GetActualToExpected<T>(this ComparisonResult<T> comparisonResult)
+        public static Delta<T> GetActualToExpected<T>(this ComparisonResult<T> comparisonResult)
         {
-            return (Action<T>)Delegate.Combine(comparisonResult.Differences
+            return comparisonResult.Differences
                 .Select(GetSingleActualToExpected<T>)
-                .ToArray());
+                .Aggregate((combinedDelta, delta) => combinedDelta.Merge(delta));
         }
 
-        public static void ExpectedToActual<T>(this ComparisonResult<T> comparisonResult, T obj)
+        public static void ApplyExpectedToActualDelta<T>(this ComparisonResult<T> comparisonResult, T obj)
         {
-            comparisonResult.GetExpectedToActual()(obj);
+            comparisonResult.GetExpectedToActualDelta().Apply(obj);
         }
 
-        public static Action<T> GetExpectedToActual<T>(this ComparisonResult<T> comparisonResult)
+        public static Delta<T> GetExpectedToActualDelta<T>(this ComparisonResult<T> comparisonResult)
         {
-            return (Action<T>)Delegate.Combine(comparisonResult.Differences
+            return comparisonResult.Differences
                 .Select(GetSingleExpectedToActual<T>)
-                .ToArray());
+                .Aggregate((combinedDelta, delta) => combinedDelta.Merge(delta));
         }
 
         private static void Validate(ComparisonConfig comparisonConfig)
@@ -50,11 +50,11 @@ namespace CompareNetObjects.Actions
         }
 
 
-        private static Action<T> GetSingleExpectedToActual<T>(Difference difference)
+        private static Delta<T> GetSingleExpectedToActual<T>(Difference difference)
         {
-            if (_expectedToActualCache.TryGetValue(difference.PropertyName, out object obj) && obj is Func<object, Action<T>> func)
+            if (_expectedToActualCache.TryGetValue(difference.PropertyName, out object obj) && obj is Func<object, Action<T>> generator)
             {
-                return func(difference.Object2);
+                return new Delta<T>(generator(difference.Object2));
             }
             else
             {
@@ -63,11 +63,11 @@ namespace CompareNetObjects.Actions
             }
         }
 
-        private static Action<T> GetSingleActualToExpected<T>(Difference difference)
+        private static Delta<T> GetSingleActualToExpected<T>(Difference difference)
         {
-            if (_actualToExpectedCache.TryGetValue(difference.PropertyName, out object obj) && obj is Func<object, Action<T>> func)
+            if (_actualToExpectedCache.TryGetValue(difference.PropertyName, out object obj) && obj is Func<object, Action<T>> generator)
             {
-                return func(difference.Object1);
+                return new Delta<T>(generator(difference.Object1));
             }
             else
             {

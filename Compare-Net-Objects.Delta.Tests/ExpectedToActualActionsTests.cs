@@ -2,7 +2,7 @@ using KellermanSoftware.CompareNetObjects;
 using System.Collections.Generic;
 using Xunit;
 
-namespace CompareNetObjects.Actions.Tests
+namespace CompareNetObjects.Delta.Tests
 {
     public class ExpectedToActualActionsTests
     {
@@ -48,7 +48,7 @@ namespace CompareNetObjects.Actions.Tests
 
             ComparisonResult<Company> comparisonResult = compareLogic.Compare<Company>(expected, actual);
 
-            comparisonResult.ExpectedToActual(expected);
+            comparisonResult.ApplyExpectedToActualDelta(expected);
 
             // expected should now be the same as actual
             ComparisonResult<Company> newComparisonResult = compareLogic.Compare<Company>(expected, actual);

@@ -1,4 +1,4 @@
-# Compare-NET-Objects.Actions [![Build Status](https://travis-ci.com/Rem0o/CompareNETObjects.Actions.svg?branch=master)](https://travis-ci.com/Rem0o/CompareNETObjects.Actions)
+# Compare-NET-Objects.Delta [![Build Status](https://travis-ci.com/Rem0o/CompareNETObjects.Delta.svg?branch=master)](https://travis-ci.com/Rem0o/CompareNETObjects.Delta)
 Let's say we have two versions of a state object:
 
 ```c#
@@ -32,16 +32,16 @@ Let's say we want to be able to undo or redo every change that was made between 
 
 Or maybe we want to apply those changes to any other state object later on. 
 
-To get the delta delegates, we use the following code:
+To get the deltas, we use the following code:
 
 ```c#
 /// Is equivalent to:
-/// Action<State> applyDelta = state => state.CurrentCount = 6;
-Action<State> applyDelta = result.GetExpectedToActual();
+/// Delta<State>> delta = state => state.CurrentCount = 6;
+Delta<State> delta = result.GetExpectedToActualDelta();
 
 /// Is equivalent to:
-/// Action<State> applyReverseDelta = state => state.CurrentCount = 5;
-Action<State> applyReverseDelta = result.GetActualToExpected();
+/// Delta<State>> reversedDelta = state => state.CurrentCount = 5;
+Delta<State> reversedDelta = result.GetActualToExpectedDelta();
 ```
 Then we can use them like so:
 ```c#
@@ -55,7 +55,7 @@ state = {
 // change an other property, it will not be affected.
 state.Description = "Some even more important stuff.";
 
-applyChanges(state);
+delta.Apply(state);
 
 /*
 state = {
@@ -64,7 +64,7 @@ state = {
 }
 */
 
-applyReverseDelta(state);
+reversedDelta.Apply(state);
 
 /*
 state = {

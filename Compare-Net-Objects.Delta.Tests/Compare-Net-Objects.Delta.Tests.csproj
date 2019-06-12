@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <RootNamespace>CompareNetObjects.Actions.Tests</RootNamespace>
+    <RootNamespace>CompareNetObjects.Delta.Tests</RootNamespace>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Compare-Net-Objects.Actions\Compare-Net-Objects.Actions.csproj" />
+    <ProjectReference Include="..\Compare-Net-Objects.Delta\Compare-Net-Objects.Delta.csproj" />
   </ItemGroup>
 
 </Project>
