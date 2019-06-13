@@ -1,5 +1,6 @@
 ﻿using KellermanSoftware.CompareNetObjects;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,7 +18,7 @@ namespace CompareNetObjects.Delta
             return new ComparisonResult<T>(comparisonResult);
         }
 
-        public static void ActualToExpected<T>(this ComparisonResult<T> comparisonResult, T obj)
+        public static void ActualToExpectedDelta<T>(this ComparisonResult<T> comparisonResult, T obj)
         {
             comparisonResult.GetActualToExpected().Apply(obj);
         }
@@ -54,7 +55,7 @@ namespace CompareNetObjects.Delta
         {
             if (_expectedToActualCache.TryGetValue(difference.PropertyName, out object obj) && obj is Func<object, Action<T>> generator)
             {
-                return new Delta<T>(generator(difference.Object2));
+                return new Delta<T>(generator(difference.Object2.CloneIfRequired()));
             }
             else
             {
@@ -67,13 +68,28 @@ namespace CompareNetObjects.Delta
         {
             if (_actualToExpectedCache.TryGetValue(difference.PropertyName, out object obj) && obj is Func<object, Action<T>> generator)
             {
-                return new Delta<T>(generator(difference.Object1));
+                return new Delta<T>(generator(difference.Object1.CloneIfRequired()));
             }
             else
             {
                 _actualToExpectedCache.Add(difference.PropertyName, GetPropertySetter<T>(difference.Object1, difference.PropertyName));
                 return GetSingleActualToExpected<T>(difference);
             }
+        }
+
+        private static object CloneIfRequired(this object obj)
+        {
+            Type type = obj.GetType();
+
+            // IEnumerable
+            if (typeof(IEnumerable).IsAssignableFrom(type) && !(typeof(string).IsAssignableFrom(type)))
+                return Activator.CreateInstance(type, obj);
+            else if (obj is ICloneable cloneable)
+            {
+                return cloneable.Clone();
+            }
+            else
+                return obj;
         }
 
         private static Func<object, Action<T>> GetPropertySetter<T>(object propertyValue, string propertyName)
